@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Informe: Eficiencia Biológica de Fibonacci</title>
+    <!-- Cargamos MathJax para que las fórmulas se vean profesionales -->
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <style>
+        :root {
+            --p-green: #1b5e20;
+            --s-green: #e8f5e9;
+            --accent: #fbc02d;
+            --text: #37474f;
+        }
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: #f0f4f2;
+            color: var(--text);
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 850px;
+            margin: auto;
+            background: white;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+        .header {
+            text-align: center;
+            border-bottom: 2px solid var(--p-green);
+            margin-bottom: 30px;
+            padding-bottom: 10px;
+        }
+        h1 { color: var(--p-green); margin: 0; font-size: 1.8rem; }
+        h2 { color: var(--p-green); font-size: 1.4rem; margin-top: 30px; }
+        
+        .box {
+            background: var(--s-green);
+            padding: 20px;
+            border-radius: 8px;
+            border-left: 5px solid var(--p-green);
+            margin: 20px 0;
+        }
+        .formula-display {
+            text-align: center;
+            font-size: 1.3rem;
+            background: #f9f9f9;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+        }
+
+        /* Simulador */
+        .simulator {
+            background: #fff;
+            border: 2px solid var(--p-green);
+            padding: 25px;
+            border-radius: 15px;
+            text-align: center;
+            margin-top: 30px;
+        }
+        input {
+            padding: 10px;
+            width: 80px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            font-size: 1.1rem;
+        }
+        button {
+            padding: 10px 20px;
+            background: var(--p-green);
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        .res-box {
+            display: none;
+            margin-top: 25px;
+            animation: fadeIn 0.4s;
+        }
+        .big-n { font-size: 4rem; font-weight: bold; color: var(--p-green); margin: 5px 0; }
+        
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <h1>Análisis de la Sucesión de Fibonacci</h1>
+        <p><i>Arquitectura de las plantas y herramientas computacionales</i></p>
+    </div>
+
+    <p>La sucesión de Fibonacci \(F_n\) es la expresión matemática de la <b>eficiencia biológica</b>. En la naturaleza, busca optimizar la captura de luz solar y el espacio mediante la regla recursiva \(F_n = F_{n-1} + F_{n-2}\).</p>
+
+    <h2>2.1. El Algoritmo de la Naturaleza</h2>
+    <div class="box">
+        <p>Definimos dos tipos de entidades en el sistema:</p>
+        <ul>
+            <li><b>Ramas Latentes (Bebés):</b> Nuevo crecimiento que requiere un periodo de "maduración" de un ciclo[cite: 1].</li>
+            <li><b>Ramas Activas (Maduras):</b> Nodos estables que producen un nuevo brote en cada ciclo[cite: 1].</li>
+        </ul>
+    </div>
+
+    <h2>2.2. Modelado Matemático</h2>
+    <p>La relación entre los términos sucesivos define la <b>Proporción Áurea</b> (\(\phi\))[cite: 1]:</p>
+    
+    <div class="formula-display">
+        $$\phi = \lim_{n \to \infty} \frac{F_{n+1}}{F_n} \approx 1,618033...$$
+    </div>
+    
+    <p>Este número permite que las hojas se dispongan de forma que ninguna tape a la de abajo, maximizando recursos[cite: 1].</p>
+
+    <div class="simulator">
+        <h3>Simulador de Crecimiento</h3>
+        <p>Ciclo a analizar (n): 
+            <input type="number" id="nVal" value="7" min="1">
+            <button onclick="calc()">Calcular</button>
+        </p>
+
+        <div id="res" class="res-box">
+            <div id="phiTag" style="background: var(--accent); display: inline-block; padding: 3px 10px; border-radius: 10px; font-weight: bold; font-size: 0.8rem;"></div>
+            <div class="big-n" id="total">13</div>
+            <p>Estructura: <span id="comp"></span></p>
+            <p style="font-size: 0.9rem; color: #666;">Fórmula: \(F_n = F_{n-1} + F_{n-2}\)</p>
+        </div>
+    </div>
+</div>
+
+<script>
+    function calc() {
+        let n = parseInt(document.getElementById('nVal').value);
+        if(isNaN(n) || n < 1) return;
+
+        let f = [0, 1];
+        for(let i=2; i<=n; i++) f[i] = f[i-1] + f[i-2];
+
+        let t = f[n];
+        let a = n > 1 ? f[n-1] : (n === 1 ? 0 : 0);
+        let b = n > 1 ? f[n-2] : (n === 1 ? 1 : 0);
+        let p = n > 1 ? (t / a).toFixed(6) : "1.000";
+
+        document.getElementById('res').style.display = 'block';
+        document.getElementById('total').innerText = t;
+        document.getElementById('comp').innerText = `${a} Activas + ${b} Latentes`;
+        document.getElementById('phiTag').innerText = `Ratio Áureo: ${p}`;
+    }
+    window.onload = calc;
+</script>
+
+</body>
+</html>
