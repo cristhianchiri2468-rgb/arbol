@@ -1,0 +1,243 @@
+\UseRawInputEncoding
+\documentclass[12pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[spanish]{babel}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{graphicx}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{geometry}
+
+% Configuración de márgenes
+\geometry{left=2.5cm,right=2.5cm,top=3cm,bottom=3cm}
+
+% Configuración de colores para el código
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.95,0.95,0.92}
+
+\lstset{
+    backgroundcolor=\color{backcolour},   
+    commentstyle=\color{codegreen},
+    keywordstyle=\color{blue},
+    numberstyle=\tiny\color{codegray},
+    stringstyle=\color{codepurple},
+    basicstyle=\ttfamily\footnotesize,
+    breakatwhitespace=false,         
+    breaklines=true,                 
+    captionpos=b,                    
+    keepspaces=true,                 
+    numbers=left,                    
+    numbersep=5pt,                  
+    showspaces=false,                
+    showstringspaces=false,
+    showtabs=false,                  
+    tabsize=2,
+    language=Matlab
+}
+
+\title{Informe Técnico: Modelado de Crecimiento Mediante la Sucesión de Fibonacci}
+\author{Parte 1: Análisis Teórico y Simulación Analítica}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\section{Introducción}
+La sucesión de Fibonacci ($F_n$) no es solo una curiosidad numérica, sino la expresión matemática de la eficiencia biológica. En la naturaleza, el crecimiento busca optimizar la captura de luz solar y el espacio. Este informe analiza cómo la regla recursiva $F_n = F_{n-1} + F_{n-2}$ gobierna la arquitectura de las plantas y cómo podemos modelar este fenómeno mediante herramientas computacionales.
+
+\section{Análisis Teórico}
+
+\subsection{El Algoritmo de la Naturaleza (Filotaxis)}
+El crecimiento de una planta sigue una lógica de estados y transiciones. Para entender la serie desde una perspectiva botánica, definimos dos tipos de entidades en el sistema:
+
+\begin{itemize}
+    \item \textbf{Ramas Latentes (Bebés):} Representan el nuevo crecimiento. No tienen la energía suficiente para ramificarse inmediatamente; requieren un periodo de ``maduración'' de un ciclo.
+    \item \textbf{Ramas Activas (Maduras):} Son nodos estables que tienen la capacidad de producir un nuevo brote en cada ciclo sin perder su propia estructura.
+\end{itemize}
+
+Esta progresión genera una estructura autosimilar. Si observamos el número total de ramas en cada nivel, obtenemos la secuencia: $1, 1, 2, 3, 5, 8, 13 \dots$ donde el crecimiento actual es la herencia de toda la historia previa del organismo.
+
+\subsection{Modelado Matemático}
+La relación entre los términos sucesivos de la serie define la Proporción Áurea ($\phi$):
+
+\begin{equation}
+\phi = \lim_{n \to \infty} \frac{F_{n+1}}{F_n} \approx 1.618033...
+\end{equation}
+
+Este número permite que las hojas o ramas se dispongan de forma que ninguna tape completamente a la de abajo, maximizando la exposición a los recursos.
+
+\section{Implementación en Octave}
+
+A continuación se presenta el script desarrollado para analizar la convergencia hacia el número áureo y la evolución poblacional:
+
+\begin{lstlisting}[language=Matlab, caption=Simulación Dinámica en Octave]
+% =========================================================================
+% SISTEMA DE ANALISIS DINAMICO: SUCESION DE FIBONACCI
+% =========================================================================
+clc; clear; close all;
+
+% Parametros de Simulacion
+n_ciclos = 15;
+fib = zeros(1, n_ciclos);
+fib(1) = 1; fib(2) = 1;
+
+% Calculo Recursivo y Vectorizacion
+for i = 3:n_ciclos
+    fib(i) = fib(i-1) + fib(i-2);
+end
+
+% Analisis de la Proporcion Aurea
+phi_real = (1 + sqrt(5)) / 2;
+ratios = fib(2:end) ./ fib(1:end-1);
+error_phi = abs(phi_real - ratios);
+
+% --- VISUALIZACION DE RESULTADOS ---
+figure('Color', [1 1 1]);
+
+% Grafico 1: Evolucion de la Poblacion (Escala Semilogaritmica)
+subplot(2,2,1);
+semilogy(1:n_ciclos, fib, '-ks', 'LineWidth', 1.5, 'MarkerFaceColor', 'g');
+grid on;
+title('Crecimiento Poblacional (Escala Log)');
+xlabel('Ciclo (n)'); ylabel('Total de Ramas (log)');
+
+% Grafico 2: Representacion por Barras
+subplot(2,2,2);
+bar(fib, 'FaceColor', [0.4 0.7 1]);
+title('Distribucion de Ramas por Ciclo');
+xlabel('Ciclo (n)'); ylabel('Cantidad');
+
+% Grafico 3: Convergencia de Ratios
+subplot(2,2,[3,4]);
+plot(2:n_ciclos, ratios, '-o', 'LineWidth', 2, 'MarkerSize', 8);
+hold on;
+yline(phi_real, 'r--', 'Proporcion Aurea (phi)', 'LineWidth', 1.5);
+grid on;
+title('Estabilizacion hacia el Limite Aureo');
+\end{lstlisting}
+
+\section{Resultados del Análisis}
+Al ejecutar la simulación, se observan tres comportamientos críticos:
+\begin{enumerate}
+    \item \textbf{Crecimiento Exponencial:} La población aumenta siguiendo una curva exponencial, permitiendo ocupar espacio rápidamente.
+    \item \textbf{Oscilación Amortiguada:} El ratio entre términos consecutivos oscila alrededor de $\phi$ hasta converger.
+    \item \textbf{Optimización Estructural:} El error respecto a la proporción áurea cae drásticamente antes del ciclo 10.
+\end{enumerate}
+\UseRawInputEncoding
+\documentclass[12pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[spanish]{babel}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{graphicx}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{geometry}
+
+% Configuración de márgenes
+\geometry{left=2.5cm,right=2.5cm,top=3cm,bottom=3cm}
+
+% Configuración de colores para el código
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.95,0.95,0.92}
+
+\lstset{
+    backgroundcolor=\color{backcolour},   
+    commentstyle=\color{codegreen},
+    keywordstyle=\color{blue},
+    numberstyle=\tiny\color{codegray},
+    stringstyle=\color{codepurple},
+    basicstyle=\ttfamily\footnotesize,
+    breakatwhitespace=false,         
+    breaklines=true,                 
+    captionpos=b,                    
+    keepspaces=true,                 
+    numbers=left,                    
+    numbersep=5pt,                  
+    showspaces=false,                
+    showstringspaces=false,
+    showtabs=false,                  
+    tabsize=2,
+    language=Matlab
+}
+
+\begin{document}
+
+\section{Profundización Matemática: Más allá de la Suma}
+
+\subsection{La Fórmula de Binet: El Salto al Infinito}
+Aunque la sucesión se define de forma recursiva, existe una forma cerrada para calcular cualquier término $F_n$ sin conocer los anteriores[cite: 1]. Esta es la \textbf{Fórmula de Binet}, que integra la raíz de cinco y la proporción áurea[cite: 1]:
+
+\begin{equation}
+F_n = \frac{\phi^n - \psi^n}{\sqrt{5}}
+\end{equation}
+
+Donde $\phi = \frac{1+\sqrt{5}}{2}$ y $\psi = \frac{1-\sqrt{5}}{2}$ es el conjugado áureo[cite: 1]. Lo fascinante de esta fórmula es que, a pesar de involucrar números irracionales, el resultado para cualquier $n$ entero es siempre un número entero exacto, demostrando la armonía entre lo discreto y lo continuo[cite: 1].
+
+\subsection{Fracciones Continuas y la Irracionalidad}
+Las plantas eligen a $\phi$ para disponer sus hojas (ángulo de oro $\approx 137.5^\circ$) porque el número áureo es el \textbf{"más irracional"} de todos los números[cite: 1]. Su representación en fracciones continuas es[cite: 1]:
+
+\begin{equation}
+\phi = 1 + \frac{1}{1 + \frac{1}{1 + \frac{1}{1 + \dots}}}
+\end{equation}
+
+Al ser la fracción continua que converge más lentamente, garantiza que las hojas nunca se alineen perfectamente en columnas verticales, evitando que las superiores bloqueen la luz a las inferiores[cite: 1].
+
+\section{Geometría de la Vida: La Espiral Áurea}
+
+\subsection{Construcción de la Espiral}
+La expansión espacial de la serie se visualiza construyendo cuadrados cuyos lados corresponden a los términos de Fibonacci ($1, 1, 2, 3, 5, 8 \dots$)[cite: 1]. Al trazar arcos de circunferencia conectando los vértices opuestos de estos cuadrados, se genera la \textbf{Espiral de Fibonacci}[cite: 1].
+
+\begin{itemize}
+    \item \textbf{Crecimiento Gnomónico:} La espiral crece pero su forma permanece inalterada, lo que permite que un organismo crezca sin cambiar su centro de gravedad[cite: 1].
+    \item \textbf{Parásticos:} En los girasoles se observan familias de espirales en sentidos opuestos; el número de espirales en cada sentido son siempre números consecutivos de Fibonacci[cite: 1].
+\end{itemize}
+
+\section{Propiedades Avanzadas y Curiosidades}
+
+\subsection{Identidad de Cassini}
+Establece una relación entre términos consecutivos que difiere solo por una unidad[cite: 1]:
+\begin{equation}
+F_{n-1} F_{n+1} - F_n^2 = (-1)^n
+\end{equation}
+
+\subsection{Suma de los n-términos}
+La suma de los primeros $n$ números de Fibonacci cumple que[cite: 1]:
+\begin{equation}
+\sum_{i=1}^n F_i = F_{n+2} - 1
+\end{equation}
+
+\section{Implementación en Octave: Verificación de Propiedades}
+
+\begin{lstlisting}[language=Matlab, caption=Verificación de Propiedades y Espiral]
+% Verificación de la Identidad de Cassini y Suma
+n = 10;
+cassini = fib(n-1)*fib(n+1) - fib(n)^2;
+suma_real = sum(fib(1:n));
+suma_teorica = fib(n+2) - 1;
+
+% Visualización simplificada de la Espiral
+figure('Color', [1 1 1]); hold on; axis equal;
+for i = 2:length(fib)
+    r = fib(i);
+    t = linspace((i-1)*pi/2, i*pi/2, 100);
+    x = r * cos(t); y = r * sin(t);
+    plot(x, y, 'Color', [0.1 0.5 0.1], 'LineWidth', 2);
+end
+title('Geometría del Crecimiento: Espiral de Fibonacci');
+\end{lstlisting}
+
+\section{Conclusion}
+La sucesión de Fibonacci no es una elección estética de la naturaleza, sino una solución matemática al problema de la optimización[cite: 1]. El modelo demuestra que la eficiencia máxima se logra mediante la recursividad[cite: 1].
+
+\end{document}
+
+\end{document}
